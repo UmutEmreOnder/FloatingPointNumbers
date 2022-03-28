@@ -35,7 +35,7 @@ public class Main {
 
     public static void integerToBit(int[] answer, String numberString) {
         int number = stringToInt(numberString);
-        int start = numberString.length() == Math.ceil(number / 10) ? 15 : 14;
+        int start = numberString.contains("u") ? 15 : 14;
 
         boolean negative = number < 0;
         number = Math.abs(number);
