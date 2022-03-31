@@ -19,17 +19,9 @@ public class Main {
 
         while(scannerFile.hasNext()){
             String number = scannerFile.nextLine();
-            if(number.contains(".")){
-                int[] answer = floatToBit(Double.parseDouble(number), flPointSize);
-                String hex = endian(bitToHex(answer), byteType.charAt(0));
-                System.out.println(hex);
-            }
-            else {
-                int[] answer = new int[16];
-                integerToBit(answer, number);
-                String hex = endian(bitToHex(answer), byteType.charAt(0));
-                System.out.println(hex);
-            }
+            int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number);
+            String hex = endian(bitToHex(answer), byteType.charAt(0));
+            System.out.println(hex);
         }
     }
 
@@ -37,7 +29,8 @@ public class Main {
         return numberString.contains("u") ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
     }
 
-    public static void integerToBit(int[] answer, String numberString) {
+    public static int[] integerToBit(String numberString) {
+        int[] answer = new int[16];
         int number = stringToInt(numberString);
         int start = numberString.contains("u") ? 15 : 14;
 
@@ -52,6 +45,7 @@ public class Main {
         }
 
         if (negative) translateToNegative(answer);
+        return answer;
     }
 
     public static void translateToNegative(int[] answer) {
@@ -106,13 +100,12 @@ public class Main {
         int intPart = (int) (a);
         double fraction = a - intPart;
         int[] intPartArray = intToBit(intPart);
+        List<Integer> fractionList = fractionToBit(fraction);
 
         int E = intPartArray.length - 1;
         int bias = (int) Math.pow(2, (size * 8) - fractionSize - 2) - 1;
         int exp = E + bias;
         int[] expArray = intToBit(exp);
-
-        List<Integer> fractionList = fractionToBit(fraction);
 
 
         int[] sum = new int[intPartArray.length + fractionList.size()];
@@ -121,19 +114,21 @@ public class Main {
             sum[intPartArray.length + i] = fractionList.get(i);
         }
 
-        int[] sumWithoutFraction = new int[fractionSize];
+        int[] roundedSum = new int[fractionSize];
         round(sum, fractionSize);
+        for (int i = 1; i <= fractionSize; i++) {
+            if (i >= sum.length) roundedSum[i - 1] = 0;
+            else roundedSum[i - 1] = sum[i];
+        }
 
-        System.arraycopy(sum, 1, sumWithoutFraction, 0, fractionSize);
-
-        int[] bitLast = new int[1 + expArray.length + sumWithoutFraction.length];
+        int[] bitLast = new int[1 + expArray.length + roundedSum.length];
         bitLast[0] = negative ? 1 : 0;
 
         System.arraycopy(expArray, 0, bitLast, 1, expArray.length);
 
         int index = 0;
         for (int i = expArray.length + 1; i < bitLast.length; i++) {
-            bitLast[i] = sumWithoutFraction[index++];
+            bitLast[i] = roundedSum[index++];
         }
 
 
@@ -182,7 +177,9 @@ public class Main {
 
     public static List<Integer> fractionToBit(double fraction) {
         List<Integer> fractionArray = new ArrayList<>();
-        for (int i = 1; i < 31; i++) {
+        for (int i = 1; i < 24; i++) {
+            if (fraction == 0) break;
+
             if (fraction >= Math.pow(2, -i)) {
                 fractionArray.add(1);
                 fraction -= Math.pow(2, -i);
