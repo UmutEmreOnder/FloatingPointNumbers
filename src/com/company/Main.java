@@ -175,7 +175,7 @@ public class Main {
     // Guzel optimize edilmis kral fonksiyon, doublein noktadan sonraki kismini bite cevirir
     public static List<Integer> fractionToBit(double fraction) {
         List<Integer> fractionArray = new ArrayList<>();
-        // Neden bu fonksiyon 24 kere donuyo gardas? Cunku en fazla 24 bite kadar gidebilir flptsize = 4 ise 1 tane fazladan donduruoz
+        // Neden bu fonksiyon 25 kere donuyo gardas? Cunku en fazla 25 bite kadar gidebilir flptsize = 4 ise 1 tane fazladan donduruoz
         // ki roundlayacagimiz yerin ilk bitini kesin olarak bilelim
         for (int i = 1; i <= 25; i++) {
             // eger fraction 0 olduysa zaten kalan elemanlar 0 olacak bi isimize yaramiyo o yuzden durabilir
