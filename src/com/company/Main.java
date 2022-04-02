@@ -19,7 +19,7 @@ public class Main {
 
         while(scannerFile.hasNext()){
             String number = scannerFile.nextLine();
-            int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number, 16);
+            int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number, 16, true);
             String hex = endian(bitToHex(answer), byteType);
             System.out.println(hex);
         }
@@ -29,10 +29,10 @@ public class Main {
         return numberString.charAt(numberString.length() - 1) == 'u' ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
     }
 
-    public static int[] integerToBit(String numberString, int size) {
+    public static int[] integerToBit(String numberString, int size, boolean fixedSize) {
         int[] answer = new int[size];
         int number = stringToInt(numberString);
-        int signed = numberString.charAt(numberString.length() - 1) == 'u' ? 0 : 1;
+        int signed = numberString.charAt(numberString.length() - 1) == 'u' || !fixedSize ? 0 : 1;
 
         boolean negative = number < 0;
         number = Math.abs(number);
@@ -99,13 +99,13 @@ public class Main {
 
         int intPart = (int) (a);
         double fraction = a - intPart;
-        int[] intPartArray = integerToBit(String.valueOf(intPart), (int) (Math.log(intPart) / Math.log(2) + 1));
+        int[] intPartArray = integerToBit(String.valueOf(intPart), (int) (Math.log(intPart) / Math.log(2) + 1), false);
         List<Integer> fractionList = fractionToBit(fraction);
 
         int E = intPartArray.length - 1;
         int bias = (int) Math.pow(2, (size * 8) - fractionSize - 2) - 1;
         int exp = E + bias;
-        int[] expArray = integerToBit(String.valueOf(exp), (int) (Math.log(exp) / Math.log(2) + 1));
+        int[] expArray = integerToBit(String.valueOf(exp), (int) (Math.log(exp) / Math.log(2) + 1), false);
 
 
         int[] sum = new int[intPartArray.length + fractionList.size()];
