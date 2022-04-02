@@ -13,14 +13,14 @@ public class Main {
         Scanner scannerFile = new Scanner(file);
         Scanner scannerInput = new Scanner(System.in);
         System.out.print("Byte Ordering: ");
-        String byteType = scannerInput.nextLine();
+        char byteType = scannerInput.nextLine().charAt(0);
         System.out.print("Floating Point Size: ");
         int flPointSize = scannerInput.nextInt();
 
         while(scannerFile.hasNext()){
             String number = scannerFile.nextLine();
             int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number);
-            String hex = endian(bitToHex(answer), byteType.charAt(0));
+            String hex = endian(bitToHex(answer), byteType);
             System.out.println(hex);
         }
     }
