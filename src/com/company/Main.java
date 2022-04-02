@@ -19,7 +19,7 @@ public class Main {
 
         while(scannerFile.hasNext()){
             String number = scannerFile.nextLine();
-            int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number);
+            int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number, 16);
             String hex = endian(bitToHex(answer), byteType);
             System.out.println(hex);
         }
@@ -29,18 +29,18 @@ public class Main {
         return numberString.charAt(numberString.length() - 1) == 'u' ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
     }
 
-    public static int[] integerToBit(String numberString) {
-        int[] answer = new int[16];
+    public static int[] integerToBit(String numberString, int size) {
+        int[] answer = new int[size];
         int number = stringToInt(numberString);
-        int start = numberString.charAt(numberString.length() - 1) == 'u' ? 15 : 14;
+        int signed = numberString.charAt(numberString.length() - 1) == 'u' ? 0 : 1;
 
         boolean negative = number < 0;
         number = Math.abs(number);
 
-        for(int i = start; i >= 0; i--) {
+        for(int i = size - signed; i >= 0; i--) {
             if (Math.pow(2, i) <= number) {
                 number -= Math.pow(2, i);
-                answer[15 - i] = 1;
+                answer[size - 1 - i] = 1;
             }
         }
 
@@ -99,13 +99,13 @@ public class Main {
 
         int intPart = (int) (a);
         double fraction = a - intPart;
-        int[] intPartArray = intToBit(intPart);
+        int[] intPartArray = integerToBit(String.valueOf(intPart), (int) (Math.log(intPart) / Math.log(2) + 1));
         List<Integer> fractionList = fractionToBit(fraction);
 
         int E = intPartArray.length - 1;
         int bias = (int) Math.pow(2, (size * 8) - fractionSize - 2) - 1;
         int exp = E + bias;
-        int[] expArray = intToBit(exp);
+        int[] expArray = integerToBit(String.valueOf(exp), (int) (Math.log(exp) / Math.log(2) + 1));
 
 
         int[] sum = new int[intPartArray.length + fractionList.size()];
@@ -154,19 +154,6 @@ public class Main {
                 break;
             }
         }
-    }
-
-    public static int[] intToBit(int num) {
-        int[] intArray = new int[(int) (Math.log(num) / Math.log(2) + 1)];
-
-        for(int i = intArray.length - 1; i >= 0; i--) {
-            if (Math.pow(2, i) <= num) {
-                num -= Math.pow(2, i);
-                intArray[intArray.length - 1 - i] = 1;
-            }
-        }
-
-        return intArray;
     }
 
     public static List<Integer> fractionToBit(double fraction) {
