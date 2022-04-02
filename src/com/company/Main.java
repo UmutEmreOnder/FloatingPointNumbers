@@ -52,18 +52,16 @@ public class Main {
         return answer;
     }
 
+    // ilk 1'i gorene kadar bir sey yapmiyor, gordukten sonra her biti ters ceviriyor
     public static void translateToNegative(int[] answer) {
         boolean firstSeen = false;
         for(int i = 15; i >= 0; i--) {
-            if (firstSeen) answer[i] = bitTranslate(answer[i]);
+            if (firstSeen) answer[i] = answer[i] == 1 ? 0 : 1;
             if (answer[i] == 1 && !firstSeen) firstSeen = true;
         }
     }
 
-    public static int bitTranslate(int bit) {
-        return bit == 1 ? 0 : 1;
-    }
-
+    // ustalik eseri fonksiyonum bi yandan assembly dinlerken bi yandan kodladim anlayan comment ekleyebilir
     public static String bitToHex(int[] bits) {
         StringBuilder answer = new StringBuilder();
         for(int k = 1; k <= bits.length / 4; k++) {
