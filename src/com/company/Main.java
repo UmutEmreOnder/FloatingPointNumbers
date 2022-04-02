@@ -182,7 +182,7 @@ public class Main {
                 fractionArray.add(0);
             }
         }
-
+        if (fraction != 0) fractionArray.add(1);
         return fractionArray;
     }
 }
