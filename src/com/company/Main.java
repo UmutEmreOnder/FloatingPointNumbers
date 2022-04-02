@@ -171,7 +171,7 @@ public class Main {
 
     public static List<Integer> fractionToBit(double fraction) {
         List<Integer> fractionArray = new ArrayList<>();
-        for (int i = 1; i < 24; i++) {
+        for (int i = 1; i <= 24; i++) {
             if (fraction == 0) break;
 
             if (fraction >= Math.pow(2, -i)) {
