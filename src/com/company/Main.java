@@ -74,6 +74,9 @@ public class Main {
         return answer.toString();
     }
 
+    // endian b ise oldugu gibi birakiyor sadece 2 karakterde bir bosluk ekliyor
+    // hoca efendiler bosluksuz input kabul etmedigi icin boyle sikten bir sey yazmak zorunda kaldim
+    // l ise de ters ceviriyo iste
     public static String endian(String hex, char endian) {
         StringBuilder newHex = new StringBuilder();
 
@@ -93,6 +96,7 @@ public class Main {
         return newHex.toString();
     }
 
+    // allah bu fonksiyonu anlamak isteyene sabir versin
     public static int[] floatToBit(double a, int size) {
         boolean negative = a < 0;
         a = Math.abs(a);
@@ -136,10 +140,18 @@ public class Main {
         return bitLast;
     }
 
+    // fraction kismi icin round fonksiyonu
     public static void round(int[] sum, int fractionSize) {
+        // eger fraction kismi zaten istedigimiz uzunlukta ya da daha kisaysa veya siradaki int 0 ise herhangi bir round yapmadan yolluyoruz
+        // 0 kontrolunun amaci eger siradaki int 0sa zaten roundUp yok oldugu gibi kalacak
+        // 111|01111111 -> 111
         if (sum.length - 1 <= fractionSize || sum[fractionSize + 1] == 0) return;
         boolean repeat = false;
 
+        // ilk once ilk 1den sonra baska bi 1 var mi diye bakiyoruz, neden? cunku eger baska bi 1 varsa direkt roundUp yapicaz
+        // yoook eger yoksa roundEven yapicaz
+        // 110|10000 -> 110
+        // 110|10001 -> 111
         for(int i = fractionSize + 2; i < sum.length; i++) {
             if (sum[i] == 1) {
                 repeat = true;
@@ -147,8 +159,10 @@ public class Main {
             }
         }
 
+        // eger roundEven yapacaksak ve ilk bit 0 ise hicbir sey yapmadan yolluyoz ustte ornegini verdim zaten
         if (!repeat && (sum[fractionSize] == 0)) return;
 
+        // eger degilse de ilk 0'i gorene kadar hepsini ters ceviriyoz 0'i gorunce onu da ters cevirip duruyoz
         for (int i = fractionSize; i >= 0; i--) {
             if (sum[i] == 1) sum[i] = 0;
             else {
@@ -158,11 +172,16 @@ public class Main {
         }
     }
 
+    // Guzel optimize edilmis kral fonksiyon, doublein noktadan sonraki kismini bite cevirir
     public static List<Integer> fractionToBit(double fraction) {
         List<Integer> fractionArray = new ArrayList<>();
-        for (int i = 1; i <= 24; i++) {
+        // Neden bu fonksiyon 24 kere donuyo gardas? Cunku en fazla 24 bite kadar gidebilir flptsize = 4 ise 1 tane fazladan donduruoz
+        // ki roundlayacagimiz yerin ilk bitini kesin olarak bilelim
+        for (int i = 1; i <= 25; i++) {
+            // eger fraction 0 olduysa zaten kalan elemanlar 0 olacak bi isimize yaramiyo o yuzden durabilir
             if (fraction == 0) break;
 
+            // o zamana kadar 2^-i kadar cikarma yapiyo iste
             if (fraction >= Math.pow(2, -i)) {
                 fractionArray.add(1);
                 fraction -= Math.pow(2, -i);
@@ -171,6 +190,11 @@ public class Main {
                 fractionArray.add(0);
             }
         }
+        // isin tatli kismi burasi
+        // simdi bura nie var? Cunku roundUp mi roundEven mi yapicaz bilmek icin bize fraction kisminin tamami gerek ama
+        // ya 300. bitte 1 tane 1 gelecekse? ya da 3000. bitte? aminakoim sonsuza kadar loop mu dondurecez?
+        // o yuzden 25 bitten sonra fraction kismi hala 0 olmadiysa yani hala eklenecek bitler varsa nerede olduklarinin bi onemi yok zaten
+        // o yuzden 1 tane 1 ekleyip gecebiliriz o kisimlar roundUp olacak o yuzden umrumuzda degil
         if (fraction != 0) fractionArray.add(1);
         return fractionArray;
     }
