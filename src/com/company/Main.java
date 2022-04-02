@@ -29,6 +29,10 @@ public class Main {
         return numberString.charAt(numberString.length() - 1) == 'u' ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
     }
 
+    // fixedSize sadece fraction kismindan cagrildiysa fonksiyon false oluyor
+    // int signed kisminin amaci 16 bitlik unsigned ya da signed gonderildiginde eger unsigned ise tum bitleri kullanabilir
+    // ama signed ise ilk biti signe icin ayirmali o yuzden for dongusu 2. bitten (yani 1. indexten) baslatmali
+    // bu dedigim fraction kismindan gelenler icin gecerli olmadigindan fixedSize booleani ekledim
     public static int[] integerToBit(String numberString, int size, boolean fixedSize) {
         int[] answer = new int[size];
         int number = stringToInt(numberString);
