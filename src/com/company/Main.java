@@ -26,13 +26,13 @@ public class Main {
     }
 
     public static int stringToInt(String numberString) {
-        return numberString.contains("u") ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
+        return numberString.charAt(numberString.length() - 1) == 'u' ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
     }
 
     public static int[] integerToBit(String numberString) {
         int[] answer = new int[16];
         int number = stringToInt(numberString);
-        int start = numberString.contains("u") ? 15 : 14;
+        int start = numberString.charAt(numberString.length() - 1) == 'u' ? 15 : 14;
 
         boolean negative = number < 0;
         number = Math.abs(number);
@@ -131,7 +131,6 @@ public class Main {
             bitLast[i] = roundedSum[index++];
         }
 
-
         return bitLast;
     }
 
@@ -146,10 +145,6 @@ public class Main {
             }
         }
 
-        roundUp(sum, fractionSize, repeat);
-    }
-
-    public static void roundUp(int[] sum, int fractionSize, boolean repeat) {
         if (!repeat && (sum[fractionSize] == 0)) return;
 
         for (int i = fractionSize; i >= 0; i--) {
@@ -159,7 +154,6 @@ public class Main {
                 break;
             }
         }
-
     }
 
     public static int[] intToBit(int num) {
