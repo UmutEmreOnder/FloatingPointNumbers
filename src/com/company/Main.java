@@ -111,7 +111,6 @@ public class Main {
         int E = intPartArray.length - 1;
         int bias = (int) Math.pow(2, (size * 8) - fractionSize - 2) - 1;
         int exp = E + bias;
-        int[] expArray = integerToBit(String.valueOf(exp), (int) (Math.log(exp) / Math.log(2) + 1), false);
 
 
         int[] sum = new int[intPartArray.length + fractionList.size()];
@@ -122,6 +121,14 @@ public class Main {
 
         int[] roundedSum = new int[fractionSize];
         round(sum, fractionSize);
+        // eger sum arrayinin ilk elementi rounddan sonra 0 olduysa
+        // demekki sum arrayi soyle bisiydi --> 1.111|111
+        // roundlaninca 0.000 oldu normalde 10.000 olup sonra 1.000'a donusmesi gerekiyor da onla ugrasmaya gerek yok onemsiz bi part cunku
+        // eger ilk bit rounddan sonra 0 olduysa demek ki 1 virgil daha kayacak exp + 1 alacak
+        exp = sum[0] == 0 ? exp + 1: exp;
+
+        int[] expArray = integerToBit(String.valueOf(exp), (int) (Math.log(exp) / Math.log(2) + 1), false);
+
         for (int i = 1; i <= fractionSize; i++) {
             if (i >= sum.length) roundedSum[i - 1] = 0;
             else roundedSum[i - 1] = sum[i];
