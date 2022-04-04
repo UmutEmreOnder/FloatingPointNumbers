@@ -123,7 +123,7 @@ public class Main {
         round(sum, fractionSize);
         // eger sum arrayinin ilk elementi rounddan sonra 0 olduysa
         // demekki sum arrayi soyle bisiydi --> 1.111|111
-        // roundlaninca 0.000 oldu normalde 10.000 olup sonra 1.000'a donusmesi gerekiyor da onla ugrasmaya gerek yok onemsiz bi part cunku
+        // roundlaninca 0.000 oldu normalde 10.000 olup sonra 1.0000'a donusmesi gerekiyor da onla ugrasmaya gerek yok onemsiz bi part cunku
         // eger ilk bit rounddan sonra 0 olduysa demek ki 1 virgil daha kayacak exp + 1 alacak
         exp = sum[0] == 0 ? exp + 1: exp;
 
