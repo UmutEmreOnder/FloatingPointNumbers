@@ -29,7 +29,7 @@ public class Main {
             int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number, 16, true);
             String hex = endian(bitToHex(answer), byteType);
             outputWrite.write(hex);
-            outputWrite.write(System.lineSeparator());
+            if (scannerFile.hasNext()) outputWrite.write(System.lineSeparator());
         }
         outputWrite.close();
     }
