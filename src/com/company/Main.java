@@ -99,7 +99,7 @@ public class Main {
         else {
             for (int i = 0; i < hex.length(); i++) {
                 newHex.append(hex.charAt(i));
-                if (i % 2 == 1) newHex.append(" ");
+                if (i % 2 == 1 && i != hex.length() - 1) newHex.append(" ");
             }
         }
         return newHex.toString();
@@ -110,13 +110,19 @@ public class Main {
         a = Math.abs(a);
 
         int fractionSize = size == 1 ? 4 : size == 2 ? 7 : size == 3 ? 13 : 19;
+        int exponentSize = size * 8 - fractionSize - 1;
 
         int intPart = (int) (a);
         double fraction = a - intPart;
-        int[] intPartArray = integerToBit(String.valueOf(intPart), (int) (Math.log(intPart) / Math.log(2) + 1), false);
+        int[] intPartArray = intPart == 0 ? new int[]{} : integerToBit(String.valueOf(intPart), (int) (Math.log(intPart) / Math.log(2) + 1), false);
+
+        int bar = foo(fraction);
+        int E = intPartArray.length - 1;
+        E = E == -1 ? bar : E;
+        fraction = intPart == 0 ? fraction - Math.pow(2, bar) : fraction;
+
         List<Integer> fractionList = fractionToBit(fraction);
 
-        int E = intPartArray.length - 1;
         int bias = (int) Math.pow(2, (size * 8) - fractionSize - 2) - 1;
         int exp = E + bias;
 
@@ -133,9 +139,9 @@ public class Main {
         //so the sum array was something like --> 1.111|111
         //It was 0.000 when it was rounded, normally it is 10.000, then it should change to 1.0000, but there is no need to deal with this part.
         //If the first bit is 0 after the round, that means it will shift 1 more comma and get exp + 1
-        exp = sum[0] == 0 ? exp + 1: exp;
+        exp = sum.length > 0 && sum[0] == 0 && intPart != 0 ? exp + 1: exp;
 
-        int[] expArray = integerToBit(String.valueOf(exp), (int) (Math.log(exp) / Math.log(2) + 1), false);
+        int[] expArray = integerToBit(String.valueOf(exp), exponentSize, false);
 
         for (int i = 1; i <= fractionSize; i++) {
             if (i >= sum.length) roundedSum[i - 1] = 0;
@@ -153,6 +159,13 @@ public class Main {
         }
 
         return bitLast;
+    }
+
+    public static int foo(double a) {
+        for(int i = -1; i >= -126; i--) {
+            if (Math.pow(2, i) <= a) return i;
+        }
+        return 5;
     }
     
     //round function for fraction part.
