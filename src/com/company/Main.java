@@ -64,7 +64,7 @@ public class Main {
     //This code doesn't do anything until sees the first 1, after seeing it inverst every bit.
     public static void translateToNegative(int[] answer) {
         boolean firstSeen = false;
-        for(int i = 15; i >= 0; i--) {
+        for(int i = answer.length - 1; i >= 0; i--) {
             if (firstSeen) answer[i] = answer[i] == 1 ? 0 : 1;
             if (answer[i] == 1 && !firstSeen) firstSeen = true;
         }
