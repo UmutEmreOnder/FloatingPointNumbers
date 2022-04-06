@@ -10,16 +10,19 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        File inputFile = new File("input.txt");
-        File outputFile = new File("output.txt");
-        FileWriter outputWrite = new FileWriter(outputFile);
-
-        Scanner scannerFile = new Scanner(inputFile);
         Scanner scannerInput = new Scanner(System.in);
+        System.out.print("Input File Name: ");
+        String fileName = scannerInput.nextLine();
         System.out.print("Byte Ordering: ");
         char byteType = scannerInput.nextLine().charAt(0);
         System.out.print("Floating Point Size: ");
         int flPointSize = scannerInput.nextInt();
+
+        File inputFile = new File(fileName);
+        File outputFile = new File("output.txt");
+        FileWriter outputWrite = new FileWriter(outputFile);
+
+        Scanner scannerFile = new Scanner(inputFile);
 
         while(scannerFile.hasNext()){
             String number = scannerFile.nextLine();
