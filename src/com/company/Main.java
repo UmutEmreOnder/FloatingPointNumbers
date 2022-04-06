@@ -1,16 +1,20 @@
 package com.company;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("input.txt");
-        Scanner scannerFile = new Scanner(file);
+    public static void main(String[] args) throws IOException {
+        File inputFile = new File("input.txt");
+        File outputFile = new File("output.txt");
+        FileWriter outputWrite = new FileWriter(outputFile);
+
+        Scanner scannerFile = new Scanner(inputFile);
         Scanner scannerInput = new Scanner(System.in);
         System.out.print("Byte Ordering: ");
         char byteType = scannerInput.nextLine().charAt(0);
@@ -21,8 +25,10 @@ public class Main {
             String number = scannerFile.nextLine();
             int[] answer = number.contains(".") ? floatToBit(Double.parseDouble(number), flPointSize) : integerToBit(number, 16, true);
             String hex = endian(bitToHex(answer), byteType);
-            System.out.println(hex);
+            outputWrite.append(hex);
+            outputWrite.write(System.lineSeparator());
         }
+        outputWrite.close();
     }
 
     public static int stringToInt(String numberString) {
@@ -80,17 +86,17 @@ public class Main {
     public static String endian(String hex, char endian) {
         StringBuilder newHex = new StringBuilder();
 
-        if (endian == 'b') {
-            for (int i = 0; i < hex.length(); i++) {
-                newHex.append(hex.charAt(i));
-                if (i % 2 == 1) newHex.append(" ");
-            }
-        }
-        else {
+        if (endian == 'l') {
             for (int i = hex.length() - 2; i >= 0; i -= 2) {
                 newHex.append(hex.charAt(i));
                 newHex.append(hex.charAt(i + 1));
                 newHex.append(" ");
+            }
+        }
+        else {
+            for (int i = 0; i < hex.length(); i++) {
+                newHex.append(hex.charAt(i));
+                if (i % 2 == 1) newHex.append(" ");
             }
         }
         return newHex.toString();
