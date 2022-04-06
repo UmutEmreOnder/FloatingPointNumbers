@@ -87,6 +87,7 @@ public class Main {
                 newHex.append(" ");
             }
         }
+
         else {
             for (int i = 0; i < hex.length(); i++) {
                 newHex.append(hex.charAt(i));
