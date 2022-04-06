@@ -1,3 +1,4 @@
+//AYNEN DÜZENLENMİYO AMINI SİKTİMİN SALAĞI
 package com.company;
 
 import java.io.File;
