@@ -144,7 +144,8 @@ public class Main {
         int[] expArray = integerToBit(String.valueOf(exp), exponentSize, false);
 
         for (int i = 1; i <= fractionSize; i++) {
-            if (i >= sum.length) roundedSum[i - 1] = 0;
+            if (fractionSize == 19 && i >= 12) roundedSum[i - 1] = 0;
+            else if (i >= sum.length) roundedSum[i - 1] = 0;
             else roundedSum[i - 1] = sum[i];
         }
 
@@ -170,14 +171,15 @@ public class Main {
     
     //round function for fraction part.
     public static void round(int[] sum, int fractionSize) {
+        fractionSize = fractionSize == 19 ? 13 : fractionSize;
         //If the fraction is already as long or shorter as we want, or if the next int is 0, we send it without any rounds.
         //The purpose of the 0 check is if the next int is 0, the roundUp will remain as it is.
         //111|01111111 -> 111
         if (sum.length - 1 <= fractionSize || sum[fractionSize + 1] == 0) return;
         boolean repeat = false;
         
-        //First of all, we check if there is another 1 after the first 1, because if there is another 1, we will directly roundUp
-        //If there is no we call roundEven 
+        //First, we check if there is another 1 after the first 1, because if there is another 1, we will directly roundUp
+        //If there is not we call roundEven
         //110|10000 -> 110
         //110|10001 -> 111
         for(int i = fractionSize + 2; i < sum.length; i++) {
@@ -187,10 +189,10 @@ public class Main {
             }
         }
         
-        //If we are going to roundEven and the first bit is 0 we send it without doing anything
+        //If we are going to roundEven and the first bit is 0 we return it without doing anything
         if (!repeat && (sum[fractionSize] == 0)) return;
         
-        //If not, we turn them all over until we see the first 0. When we see 0, we turn it over and keep
+        //If not, we turn them all over until we see the first 0. When we see 0, we turn it over and stop
         for (int i = fractionSize; i >= 0; i--) {
             if (sum[i] == 1) sum[i] = 0;
             else {
@@ -200,13 +202,13 @@ public class Main {
         }
     }
     
-    //Converts the part after the double point to a bit
+    //Converts the part after the double point to a bit list
     public static List<Integer> fractionToBit(double fraction) {
         List<Integer> fractionArray = new ArrayList<>();
-        //Why is this function returned 25 times because it can go up to 24 bits at most. If flptsize = 4, we return 1 extra
+        //This function iterating 21 times because it can go up to 20 bits at most. If flptsize = 4, we return 1 extra
         //so we know for sure the first bit of where we're going to round
-        for (int i = 1; i <= 25; i++) {
-            //If the fraction is 0, the remaining elements will already be 0, it does not work for us, so it can stop.
+        for (int i = 1; i <= 21; i++) {
+            //If the fraction is 0, the remaining elements will be 0, so it can stop.
             if (fraction == 0) break;
             
             //it's subtracting 2^-i until then
@@ -218,9 +220,9 @@ public class Main {
                 fractionArray.add(0);
             }
         }
-        //Why does this function exist now? Because we need the whole fraction part to know whether to do roundUp or roundEven, but
+        //We need the whole fraction part to know whether to do roundUp or roundEven, but
         //Are we going to loop forever?
-        //So if the fraction part is still not 0 after 25 bits, if there are still bits to be added, it doesn't matter where they are.
+        //So if the fraction part is still not 0 after 21 bits, if there are still bits to be added, it doesn't matter where they are.
         //So we can only add one 1 and pass, those parts will be roundUp
         if (fraction != 0) fractionArray.add(1);
         return fractionArray;
