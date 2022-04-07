@@ -76,7 +76,7 @@ public class Main {
         for(int k = 1; k <= bits.length / 4; k++) {
             int hexValue = 0;
             for(int i = 4*k - 1; i >= 4*k - 4; i--) {
-                if (bits[i] == 1) hexValue += (i >= 4) ? Math.pow(2, 3 - (i % 4)) : Math.pow(2, 3 - i);
+                if (bits[i] == 1) hexValue += Math.pow(2, 3 - (i % 4));
             }
             answer.append(hexValue < 10 ? hexValue : String.valueOf(Character.toChars((hexValue - 10) + 'A')));
         }
@@ -116,10 +116,10 @@ public class Main {
         double fraction = a - intPart;
         int[] intPartArray = intPart == 0 ? new int[]{} : integerToBit(String.valueOf(intPart), (int) (Math.log(intPart) / Math.log(2) + 1), false);
 
-        int bar = foo(fraction);
+        int power = log2(fraction);
         int E = intPartArray.length - 1;
-        E = E == -1 ? bar : E;
-        fraction = intPart == 0 ? fraction - Math.pow(2, bar) : fraction;
+        E = E == -1 ? power : E;
+        fraction = intPart == 0 ? fraction - Math.pow(2, power) : fraction;
 
         List<Integer> fractionList = fractionToBit(fraction);
 
@@ -162,7 +162,7 @@ public class Main {
         return bitLast;
     }
 
-    public static int foo(double a) {
+    public static int log2(double a) {
         for(int i = -1; i >= -126; i--) {
             if (Math.pow(2, i) <= a) return i;
         }
