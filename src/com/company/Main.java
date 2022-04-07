@@ -1,5 +1,3 @@
-package com.company;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,10 +36,13 @@ public class Main {
         return numberString.charAt(numberString.length() - 1) == 'u' ? Integer.parseInt(numberString.substring(0, numberString.length() - 1)) : Integer.parseInt(numberString);
     }
     
-    //If fixedSize is only called from fraction part then function is false.
-    //The purpose of the int signed part is when sent 16-bit unsigned or signed, if it is unsigned, it can use all bits.
-    //But if it is signed, the first bit should be reserved for signed, so the for loop should start from the 2nd bit from the last (ie 1st index from the last).
-    //Since this event is not valid for those coming from fraction part, so we added the fixedSize boolean.
+    /**
+    If fixedSize is only called from fraction part then function is false.
+    The purpose of the int signed part is when sent 16-bit unsigned or signed, if it is unsigned, it can use all bits.
+    But if it is signed, the first bit should be reserved for signed, so the for loop should start from the 2nd bit from the last (ie 1st index from the last).
+    Since this event is not valid for those coming from fraction part, so we added the fixedSize boolean.
+    */
+    
     public static int[] integerToBit(String numberString, int size, boolean fixedSize) {
         int[] answer = new int[size];
         int number = stringToInt(numberString);
@@ -61,7 +62,7 @@ public class Main {
         return answer;
     }
     
-    //This code doesn't do anything until sees the first 1, after seeing it inverst every bit.
+    /**This code doesn't do anything until sees the first 1, after seeing it inverst every bit.*/
     public static void translateToNegative(int[] answer) {
         boolean firstSeen = false;
         for(int i = answer.length - 1; i >= 0; i--) {
@@ -70,7 +71,7 @@ public class Main {
         }
     }
     
-    //The function that converts the incoming bit array to hexa, regardless of the length of the bit.
+    /**The function that converts the incoming bit array to hexa, regardless of the length of the bit.*/
     public static String bitToHex(int[] bits) {
         StringBuilder answer = new StringBuilder();
         for(int k = 1; k <= bits.length / 4; k++) {
@@ -83,8 +84,10 @@ public class Main {
         return answer.toString();
     }
     
-    //If endian is b, function leaves it. Just adds a space every 2 characters.
-    //If it is 1 then invert.
+    /**
+    If endian is b, function leaves it. Just adds a space every 2 characters.
+    If it is 1 then invert.
+    */
     public static String endian(String hex, char endian) {
         StringBuilder newHex = new StringBuilder();
 
@@ -135,10 +138,12 @@ public class Main {
 
         int[] roundedSum = new int[fractionSize];
         round(sum, fractionSize);
-        //If the first element of the sum array is 0 after the round
-        //so the sum array was something like --> 1.111|111
-        //It was 0.000 when it was rounded, normally it is 10.000, then it should change to 1.0000, but there is no need to deal with this part.
-        //If the first bit is 0 after the round, that means it will shift 1 more comma and get exp + 1
+        /**
+        If the first element of the sum array is 0 after the round
+        so the sum array was something like --> 1.111|111
+        It was 0.000 when it was rounded, normally it is 10.000, then it should change to 1.0000, but there is no need to deal with this part.
+        If the first bit is 0 after the round, that means it will shift 1 more comma and get exp + 1
+        */
         exp = sum.length > 0 && sum[0] == 0 && intPart != 0 ? exp + 1: exp;
 
         int[] expArray = integerToBit(String.valueOf(exp), exponentSize, false);
@@ -169,19 +174,23 @@ public class Main {
         return 5;
     }
     
-    //round function for fraction part.
+    /**Round function for fraction part.*/
     public static void round(int[] sum, int fractionSize) {
         fractionSize = fractionSize == 19 ? 13 : fractionSize;
-        //If the fraction is already as long or shorter as we want, or if the next int is 0, we send it without any rounds.
-        //The purpose of the 0 check is if the next int is 0, the roundUp will remain as it is.
-        //111|01111111 -> 111
+        /**
+        If the fraction is already as long or shorter as we want, or if the next int is 0, we send it without any rounds.
+        The purpose of the 0 check is if the next int is 0, the roundUp will remain as it is.
+        111|01111111 -> 111
+        */
         if (sum.length - 1 <= fractionSize || sum[fractionSize + 1] == 0) return;
         boolean repeat = false;
         
-        //First, we check if there is another 1 after the first 1, because if there is another 1, we will directly roundUp
-        //If there is not we call roundEven
-        //110|10000 -> 110
-        //110|10001 -> 111
+        /**
+        First, we check if there is another 1 after the first 1, because if there is another 1, we will directly roundUp
+        If there is not we call roundEven
+        110|10000 -> 110
+        110|10001 -> 111
+        */
         for(int i = fractionSize + 2; i < sum.length; i++) {
             if (sum[i] == 1) {
                 repeat = true;
@@ -189,10 +198,10 @@ public class Main {
             }
         }
         
-        //If we are going to roundEven and the first bit is 0 we return it without doing anything
+        /**If we are going to roundEven and the first bit is 0 we return it without doing anything*/
         if (!repeat && (sum[fractionSize] == 0)) return;
         
-        //If not, we turn them all over until we see the first 0. When we see 0, we turn it over and stop
+        /**If not, we turn them all over until we see the first 0. When we see 0, we turn it over and stop*/
         for (int i = fractionSize; i >= 0; i--) {
             if (sum[i] == 1) sum[i] = 0;
             else {
@@ -202,16 +211,18 @@ public class Main {
         }
     }
     
-    //Converts the part after the double point to a bit list
+    /**Converts the part after the double point to a bit list*/
     public static List<Integer> fractionToBit(double fraction) {
         List<Integer> fractionArray = new ArrayList<>();
-        //This function iterating 21 times because it can go up to 20 bits at most. If flptsize = 4, we return 1 extra
-        //so we know for sure the first bit of where we're going to round
+        /**
+        This function iterating 21 times because it can go up to 20 bits at most. If flptsize = 4, we return 1 extra
+        so we know for sure the first bit of where we're going to round
+        */
         for (int i = 1; i <= 21; i++) {
-            //If the fraction is 0, the remaining elements will be 0, so it can stop.
+            /**If the fraction is 0, the remaining elements will be 0, so it can stop.*/
             if (fraction == 0) break;
             
-            //it's subtracting 2^-i until then
+            /**It's subtracting 2^-i until then*/
             if (fraction >= Math.pow(2, -i)) {
                 fractionArray.add(1);
                 fraction -= Math.pow(2, -i);
@@ -220,10 +231,12 @@ public class Main {
                 fractionArray.add(0);
             }
         }
-        //We need the whole fraction part to know whether to do roundUp or roundEven, but
-        //Are we going to loop forever?
-        //So if the fraction part is still not 0 after 21 bits, if there are still bits to be added, it doesn't matter where they are.
-        //So we can only add one 1 and pass, those parts will be roundUp
+        /**
+        We need the whole fraction part to know whether to do roundUp or roundEven, but
+        Are we going to loop forever?
+        So if the fraction part is still not 0 after 21 bits, if there are still bits to be added, it doesn't matter where they are.
+        So we can only add one 1 and pass, those parts will be roundUp
+        */
         if (fraction != 0) fractionArray.add(1);
         return fractionArray;
     }
